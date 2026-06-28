@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eMplex J.A.R.V.I.S. — 次世代経営ダッシュボード</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#03194C;
+  --navy2:#071f5a;
+  --navy3:#0a2266;
+  --red:#c8102e;
+  --red2:rgba(200,16,46,.12);
+  --gold:#f59e0b;
+  --gold2:rgba(245,158,11,.12);
+  --white:#ffffff;
+  --paper:#f5f4f0;
+  --ink:#03194C;
+  --fog:#4a5d7a;
+  --mist:#8a9ab8;
+  --border:rgba(3,25,76,.1);
+  --border2:rgba(3,25,76,.18);
+  --dp:'Syne',sans-serif;
+  --mn:'Space Mono',monospace;
+  --sn:'Noto Sans JP',sans-serif;
+  --sr:'Noto Serif JP',serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sn);background:var(--navy);color:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 3.5rem;height:72px;
+  background:rgba(3,25,76,.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.nav-logo{display:flex;align-items:center;gap:.75rem;text-decoration:none}
+.nav-logo-mark{
+  width:38px;height:38px;
+  background:var(--navy);border:1px solid rgba(255,255,255,.15);
+  clip-path:polygon(0 0,82% 0,100% 18%,100% 100%,18% 100%,0 82%);
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-logo-mark svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-logo-text{}
+.nav-logo-name{font-family:var(--dp);font-size:1.25rem;font-weight:800;color:var(--white);line-height:1;letter-spacing:.03em}
+.nav-logo-name .M{color:var(--red)}
+.nav-logo-jarvis{font-family:var(--mn);font-size:.52rem;letter-spacing:.28em;color:rgba(255,255,255,.5);margin-top:.15rem}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{
+  font-family:var(--mn);font-size:.58rem;letter-spacing:.1em;
+  color:rgba(255,255,255,.4);text-decoration:none;transition:color .2s;
+}
+.nav-links a:hover{color:rgba(255,255,255,.85)}
+.nav-right{display:flex;align-items:center;gap:1.2rem}
+.nav-cta{
+  font-family:var(--mn);font-size:.6rem;letter-spacing:.1em;
+  background:var(--red);color:var(--white);
+  padding:.5rem 1.4rem;text-decoration:none;border:none;cursor:pointer;
+  transition:all .2s;
+}
+.nav-cta:hover{background:#a30d24}
+.nav-back{font-family:var(--mn);font-size:.54rem;color:rgba(255,255,255,.3);text-decoration:none;letter-spacing:.08em;transition:color .2s}
+.nav-back:hover{color:rgba(255,255,255,.6)}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;padding-top:72px;
+  position:relative;overflow:hidden;
+  background:var(--navy);
+  display:grid;grid-template-columns:1fr 1fr;
+}
+/* Atmospheric depth layers */
+.hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 60% at 20% 60%,rgba(200,16,46,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 80% at 80% 40%,rgba(3,25,76,.8) 0%,transparent 60%),
+    linear-gradient(135deg,rgba(7,31,90,.9) 0%,var(--navy) 50%,rgba(2,10,35,.95) 100%);
+}
+/* Subtle grid */
+.hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+.hero-left{
+  padding:5rem 3.5rem 5rem 4.5rem;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2;
+}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:.8rem;
+  font-family:var(--mn);font-size:.56rem;letter-spacing:.28em;
+  color:rgba(255,255,255,.3);text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.hero-eyebrow::before{content:'';width:2rem;height:1px;background:rgba(255,255,255,.2)}
+.hero-edition{
+  display:inline-flex;align-items:center;gap:.55rem;
+  background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.35);
+  padding:.3rem .9rem;margin-bottom:3rem;
+  font-family:var(--mn);font-size:.56rem;letter-spacing:.12em;color:rgba(200,16,46,.9);
+  width:fit-content;
+}
+.hero-edition-pulse{
+  width:6px;height:6px;border-radius:50%;background:var(--red);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-h1{
+  font-family:var(--dp);font-size:clamp(2.8rem,5vw,5.6rem);
+  font-weight:800;line-height:1.08;letter-spacing:-.01em;
+  color:var(--white);margin-bottom:.5rem;
+}
+.hero-h1 .emplex{color:var(--white)}
+.hero-h1 .M{color:var(--red)}
+.hero-h1 .jarvis-line{
+  display:block;
+  font-family:var(--mn);font-size:clamp(1rem,1.6vw,1.6rem);
+  font-weight:400;letter-spacing:.18em;
+  color:rgba(255,255,255,.35);margin-top:.4rem;margin-bottom:1.5rem;
+}
+.hero-tagline{
+  font-family:var(--sr);font-size:clamp(1.3rem,2vw,1.85rem);
+  font-weight:300;line-height:1.65;color:rgba(255,255,255,.75);
+  margin-bottom:2rem;border-left:2px solid var(--red);padding-left:1.2rem;
+}
+.hero-tagline em{font-style:normal;color:var(--white);font-weight:400}
+.hero-lead{
+  font-size:.88rem;font-weight:300;line-height:2;
+  color:rgba(255,255,255,.45);max-width:440px;margin-bottom:3rem;
+}
+.hero-actions{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.btn-primary{
+  display:inline-block;background:var(--red);color:var(--white);
+  padding:.82rem 2.2rem;font-family:var(--mn);font-size:.7rem;letter-spacing:.12em;
+  text-decoration:none;border:none;cursor:pointer;transition:all .22s;
+}
+.btn-primary:hover{background:#a30d24;transform:translateY(-1px);box-shadow:0 12px 28px rgba(200,16,46,.3)}
+.btn-secondary{
+  display:inline-block;border:1px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.55);padding:.8rem 1.8rem;
+  font-family:var(--mn);font-size:.68rem;letter-spacing:.1em;
+  text-decoration:none;transition:all .2s;background:transparent;cursor:pointer;
+}
+.btn-secondary:hover{border-color:rgba(255,255,255,.45);color:rgba(255,255,255,.85)}
+.hero-right{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  padding:4rem 3.5rem 4rem 2rem;
+}
+
+/* ── DASHBOARD PREVIEW (MASKED) ── */
+.dashboard-preview{
+  width:100%;max-width:580px;position:relative;
+  animation:floatIn 1s cubic-bezier(.22,1,.36,1) forwards;
+  opacity:0;transform:translateY(28px);
+}
+@keyframes floatIn{to{opacity:1;transform:none}}
+.preview-frame-wrap{
+  position:relative;
+  border:1px solid rgba(255,255,255,.08);
+  overflow:hidden;
+  box-shadow:
+    0 0 0 1px rgba(200,16,46,.15),
+    0 32px 80px rgba(0,0,0,.6),
+    0 0 80px rgba(3,25,76,.4);
+}
+/* Topbar replica */
+.preview-topbar{
+  background:#03194C;border-bottom:2px solid var(--red);
+  padding:.55rem 1rem;display:flex;align-items:center;gap:.5rem;
+  border-top:1px solid rgba(255,255,255,.1);
+}
+.preview-logo-area{display:flex;align-items:center;gap:.4rem;flex-shrink:0;padding-right:.75rem;border-right:1px solid rgba(255,255,255,.08)}
+.preview-logo-name{font-family:var(--dp);font-size:.85rem;font-weight:800;color:var(--white);line-height:1}
+.preview-logo-name .pM{color:var(--red)}
+.preview-logo-sub{font-family:var(--mn);font-size:.38rem;letter-spacing:.2em;color:rgba(255,255,255,.4);margin-top:.1rem}
+.preview-tabs{display:flex;gap:.3rem;flex:1;overflow:hidden;padding:0 .5rem}
+.preview-tab{
+  font-family:var(--mn);font-size:.42rem;letter-spacing:.05em;
+  padding:.28rem .55rem;border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.35);white-space:nowrap;flex-shrink:0;
+}
+.preview-tab.act{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.4);color:#f59e0b}
+/* Iframe container with blur mask */
+.preview-iframe-container{
+  position:relative;height:360px;overflow:hidden;
+  background:var(--navy);
+}
+.preview-iframe{
+  width:200%;height:200%;border:none;
+  transform:scale(0.5) translateX(-2%) translateY(-2%);
+  transform-origin:top left;
+  pointer-events:none;
+}
+/* Confidential overlay */
+.preview-mask{
+  position:absolute;inset:0;z-index:10;
+  background:linear-gradient(
+    to bottom,
+    rgba(3,25,76,.2) 0%,
+    rgba(3,25,76,.5) 40%,
+    rgba(3,25,76,.85) 80%,
+    var(--navy) 100%
+  );
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;
+}
+.preview-mask-badge{
+  background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.4);
+  font-family:var(--mn);font-size:.55rem;letter-spacing:.2em;color:rgba(200,16,46,.9);
+  padding:.35rem 1rem;text-transform:uppercase;
+}
+.preview-mask-title{
+  font-family:var(--dp);font-size:1.05rem;font-weight:700;
+  color:var(--white);text-align:center;letter-spacing:.04em;
+}
+.preview-mask-sub{
+  font-family:var(--mn);font-size:.56rem;letter-spacing:.1em;
+  color:rgba(255,255,255,.4);text-align:center;
+}
+.preview-mask-dot{
+  display:flex;align-items:center;gap:.5rem;
+  font-family:var(--mn);font-size:.52rem;color:rgba(255,255,255,.3);letter-spacing:.08em;
+}
+.preview-mask-dot::before{content:'●';color:var(--red);font-size:.4rem;animation:blink 1.5s ease-in-out infinite}
+
+/* ── STRIP ── */
+.strip{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  background:var(--red);border-top:1px solid rgba(0,0,0,.2);
+  position:relative;z-index:10;
+}
+.strip-item{
+  padding:2.2rem 1.8rem;
+  border-right:1px solid rgba(255,255,255,.12);
+  text-align:center;
+}
+.strip-item:last-child{border-right:none}
+.strip-num{
+  font-family:var(--dp);font-size:clamp(2rem,2.8vw,2.8rem);font-weight:800;
+  color:var(--white);margin-bottom:.3rem;line-height:1;
+}
+.strip-num sup{font-family:var(--mn);font-size:.75rem;font-weight:400;color:rgba(255,255,255,.7)}
+.strip-label{font-family:var(--mn);font-size:.56rem;letter-spacing:.1em;color:rgba(255,255,255,.7)}
+
+/* ── SECTIONS ── */
+.s{padding:7rem 4.5rem;position:relative}
+.s.navy{background:var(--navy)}
+.s.navy2{background:var(--navy2)}
+.s.paper{background:var(--paper)}
+.s.white-s{background:var(--white)}
+
+/* Section labels */
+.s-label{
+  font-family:var(--mn);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;
+  display:flex;align-items:center;gap:.75rem;margin-bottom:1.2rem;
+  color:rgba(255,255,255,.3);
+}
+.s-label::before{content:'';width:1.5rem;height:1px;background:rgba(255,255,255,.2)}
+.s-label.red-l{color:rgba(200,16,46,.8)}
+.s-label.red-l::before{background:rgba(200,16,46,.5)}
+.s-label.gold-l{color:rgba(245,158,11,.8)}
+.s-label.gold-l::before{background:rgba(245,158,11,.5)}
+.s-label.ink{color:rgba(3,25,76,.5)}
+.s-label.ink::before{background:rgba(3,25,76,.3)}
+
+/* Headings */
+.s-h2{
+  font-family:var(--dp);font-size:clamp(2.2rem,3.5vw,3.8rem);
+  font-weight:800;line-height:1.1;letter-spacing:-.01em;margin-bottom:1.2rem;
+}
+.s-h2.white{color:var(--white)}
+.s-h2.ink{color:var(--navy)}
+.s-h2 em{font-style:italic;font-family:var(--sr);font-weight:300}
+.s-h2 .red{color:var(--red)}
+.s-h2 .gold{color:var(--gold)}
+.s-h2 .dim{color:rgba(255,255,255,.35)}
+.s-body{font-size:.9rem;font-weight:300;line-height:2.1;max-width:580px}
+.s-body.white{color:rgba(255,255,255,.55)}
+.s-body.ink{color:var(--fog)}
+
+/* ── OS EVOLUTION (3-column) ── */
+.evo-cols{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.07);margin-top:4rem;
+}
+.evo-col{padding:2.5rem 2rem;position:relative;overflow:hidden}
+.evo-col.past{background:rgba(255,255,255,.02)}
+.evo-col.middle{background:rgba(255,255,255,.035)}
+.evo-col.now{background:rgba(200,16,46,.05);border-left:2px solid var(--red)}
+.evo-col-gen{
+  font-family:var(--mn);font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;
+  margin-bottom:1.2rem;padding-bottom:.85rem;border-bottom:1px solid;
+}
+.evo-col.past .evo-col-gen{color:rgba(255,255,255,.2);border-color:rgba(255,255,255,.07)}
+.evo-col.middle .evo-col-gen{color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.1)}
+.evo-col.now .evo-col-gen{color:rgba(200,16,46,.7);border-color:rgba(200,16,46,.2)}
+.evo-col-title{
+  font-family:var(--dp);font-size:1.05rem;font-weight:700;margin-bottom:.75rem;
+}
+.evo-col.past .evo-col-title,.evo-col.middle .evo-col-title{color:rgba(255,255,255,.4)}
+.evo-col.now .evo-col-title{color:var(--white)}
+.evo-col-essence{
+  font-family:var(--mn);font-size:.54rem;letter-spacing:.08em;
+  padding:.3rem .65rem;display:inline-block;margin-bottom:1.1rem;
+}
+.evo-col.past .evo-col-essence{background:rgba(255,255,255,.04);color:rgba(255,255,255,.25)}
+.evo-col.middle .evo-col-essence{background:rgba(255,255,255,.06);color:rgba(255,255,255,.35)}
+.evo-col.now .evo-col-essence{background:rgba(200,16,46,.12);color:rgba(200,16,46,.9)}
+.evo-col-items{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.evo-col-items li{display:flex;gap:.6rem;font-size:.77rem;font-weight:300;line-height:1.8}
+.evo-col.past .evo-col-items li{color:rgba(255,255,255,.25)}
+.evo-col.middle .evo-col-items li{color:rgba(255,255,255,.35)}
+.evo-col.now .evo-col-items li{color:rgba(255,255,255,.7)}
+.evo-col.past .evo-col-items li::before,.evo-col.middle .evo-col-items li::before{content:'—';color:rgba(255,255,255,.15);font-family:var(--mn);font-size:.6rem;flex-shrink:0}
+.evo-col.now .evo-col-items li::before{content:'→';color:var(--red);font-family:var(--mn);font-size:.6rem;flex-shrink:0}
+.evo-col-verdict{
+  margin-top:1.4rem;padding:.9rem;font-size:.76rem;font-weight:300;line-height:1.75;
+}
+.evo-col.past .evo-col-verdict{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2)}
+.evo-col.middle .evo-col-verdict{background:rgba(255,255,255,.04);color:rgba(255,255,255,.3)}
+.evo-col.now .evo-col-verdict{background:rgba(200,16,46,.1);color:rgba(255,255,255,.7);border:1px solid rgba(200,16,46,.2)}
+
+/* ── ECOSYSTEM LAYER MAP ── */
+.layer-map{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:rgba(3,25,76,.12);
+  border:1px solid rgba(3,25,76,.12);margin-top:4rem;
+}
+.layer-item{
+  background:var(--white);padding:1.8rem 1.5rem;
+  transition:background .2s;position:relative;overflow:hidden;
+}
+.layer-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+}
+.layer-item:hover{background:rgba(3,25,76,.03)}
+.layer-item[data-l="l0"]::before{background:#f59e0b}
+.layer-item[data-l="l1"]::before{background:#3b82f6}
+.layer-item[data-l="l2"]::before{background:#0d9488}
+.layer-item[data-l="l3"]::before{background:#7c3aed}
+.layer-item[data-l="l4"]::before{background:#059669}
+.layer-item[data-l="l5"]::before{background:#ea580c}
+.layer-item[data-l="l6"]::before{background:#64748b}
+.layer-item[data-l="jarvis"]::before{background:var(--red)}
+.layer-badge{
+  font-family:var(--mn);font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--mist);margin-bottom:.5rem;
+}
+.layer-title{
+  font-family:var(--dp);font-size:.95rem;font-weight:700;
+  color:var(--navy);margin-bottom:.5rem;
+}
+.layer-modules{list-style:none;display:flex;flex-direction:column;gap:.3rem}
+.layer-modules li{
+  font-size:.72rem;font-weight:300;color:var(--fog);
+  display:flex;gap:.4rem;align-items:baseline;line-height:1.6;
+}
+.layer-modules li::before{content:'·';color:var(--mist);font-size:.85rem}
+.layer-item[data-l="jarvis"]{
+  background:var(--navy);grid-column:span 1;
+}
+.layer-item[data-l="jarvis"] .layer-badge{color:rgba(255,255,255,.3)}
+.layer-item[data-l="jarvis"] .layer-title{color:var(--white)}
+.layer-item[data-l="jarvis"] .layer-modules li{color:rgba(255,255,255,.5)}
+.layer-item[data-l="jarvis"] .layer-modules li::before{color:var(--red)}
+
+/* ── MANIFESTO (dark) ── */
+.manifesto-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:1px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.06);margin-top:4rem;
+}
+.mc{
+  padding:2.5rem 2.2rem;background:rgba(255,255,255,.03);
+  position:relative;overflow:hidden;transition:background .22s;
+}
+.mc:hover{background:rgba(255,255,255,.06)}
+.mc::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,var(--red),transparent);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .35s cubic-bezier(.22,1,.36,1);
+}
+.mc:hover::after{transform:scaleX(1)}
+.mc-num{
+  font-family:var(--dp);font-size:3.5rem;font-weight:800;
+  color:rgba(255,255,255,.05);line-height:1;margin-bottom:.75rem;
+}
+.mc-title{
+  font-family:var(--dp);font-size:1.1rem;font-weight:700;
+  color:var(--white);margin-bottom:.7rem;line-height:1.3;
+}
+.mc-desc{font-size:.8rem;font-weight:300;line-height:2;color:rgba(255,255,255,.5)}
+.mc-vs{
+  margin-top:1.2rem;padding:.75rem .9rem;
+  background:rgba(200,16,46,.08);border:1px solid rgba(200,16,46,.2);
+  font-family:var(--mn);font-size:.56rem;
+}
+.mc-vs-row{display:flex;align-items:center;gap:.75rem}
+.mc-vs-before{color:rgba(255,255,255,.25);text-decoration:line-through}
+.mc-vs-arrow{color:var(--red);font-size:.7rem}
+.mc-vs-after{color:rgba(200,16,46,.9);font-weight:700}
+
+/* ── PROFILE ── */
+.prof-section{background:var(--paper)}
+.prof-grid{display:grid;grid-template-columns:400px 1fr;gap:5rem;align-items:start}
+/* Photo card */
+.prof-photo-card{position:sticky;top:88px}
+.prof-photo{
+  width:100%;aspect-ratio:3/4;overflow:hidden;
+  /* Photo container — will show img or fallback */
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%);
+  position:relative;
+}
+.prof-photo img{
+  width:100%;height:100%;object-fit:cover;object-position:top center;
+  display:block;
+}
+.prof-photo-placeholder{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;
+}
+.prof-photo-initial{
+  font-family:var(--dp);font-size:6rem;font-weight:800;
+  color:rgba(255,255,255,.1);
+}
+.prof-photo-note{
+  font-family:var(--mn);font-size:.52rem;color:rgba(255,255,255,.2);
+  letter-spacing:.12em;text-align:center;padding:0 2rem;
+}
+.prof-name-block{
+  background:var(--navy);padding:1.5rem 1.8rem;
+  margin-top:-4px;
+}
+.prof-name{font-family:var(--dp);font-size:1.4rem;font-weight:800;color:var(--white);margin-bottom:.15rem}
+.prof-name-en{font-family:var(--mn);font-size:.58rem;letter-spacing:.18em;color:rgba(255,255,255,.35);margin-bottom:.65rem}
+.prof-role-line{font-family:var(--mn);font-size:.58rem;letter-spacing:.06em;color:rgba(255,255,255,.5);line-height:1.8}
+.prof-badges{margin-top:.9rem;display:flex;flex-direction:column;gap:.3rem}
+.prof-badge{
+  display:flex;align-items:center;gap:.5rem;
+  font-family:var(--mn);font-size:.52rem;letter-spacing:.06em;
+  color:rgba(255,255,255,.5);
+}
+.prof-badge::before{content:'✓';color:var(--red);font-size:.6rem}
+/* Career */
+.prof-career{}
+.prof-career-intro{
+  font-family:var(--dp);font-size:clamp(1.5rem,2.5vw,2.4rem);font-weight:700;
+  color:var(--navy);line-height:1.25;margin-bottom:2.5rem;
+}
+.prof-career-intro em{font-style:normal;color:var(--red)}
+.c-item{
+  display:grid;grid-template-columns:90px 1fr;gap:1.5rem;
+  padding:1.3rem 0;border-bottom:1px solid rgba(3,25,76,.1);
+}
+.c-item:first-of-type{border-top:1px solid rgba(3,25,76,.1)}
+.c-yr{font-family:var(--mn);font-size:.6rem;color:var(--mist);padding-top:.12rem;letter-spacing:.06em}
+.c-txt{font-size:.84rem;font-weight:300;line-height:1.9;color:var(--fog)}
+.c-txt strong{color:var(--navy);font-weight:500}
+
+/* ── PRICING ── */
+.price-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.07);margin-top:4rem;
+}
+.price-card{padding:2.5rem 2rem;background:rgba(255,255,255,.03);position:relative}
+.price-card.hot{background:rgba(200,16,46,.06);border:1px solid rgba(200,16,46,.2)}
+.price-tag{
+  position:absolute;top:0;right:0;
+  background:var(--red);color:var(--white);
+  font-family:var(--mn);font-size:.5rem;letter-spacing:.1em;padding:.25rem .75rem;
+}
+.plan-n{font-family:var(--mn);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.85rem}
+.plan-p{font-family:var(--dp);font-size:2.5rem;font-weight:800;color:var(--white);margin-bottom:.3rem;line-height:1}
+.plan-p sub{font-family:var(--sn);font-size:.76rem;font-weight:300;color:rgba(255,255,255,.4);vertical-align:baseline}
+.plan-d{font-size:.78rem;font-weight:300;color:rgba(255,255,255,.4);line-height:1.8;padding-bottom:1.2rem;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:1.2rem}
+.plan-fs{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:2rem}
+.plan-fs li{display:flex;gap:.6rem;font-size:.76rem;font-weight:300;color:rgba(255,255,255,.45);line-height:1.65}
+.plan-fs li::before{content:'—';color:var(--red);font-family:var(--mn);font-size:.65rem;flex-shrink:0;opacity:.6}
+.plan-btn{
+  display:block;width:100%;padding:.75rem;text-align:center;
+  border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.55);
+  font-family:var(--mn);font-size:.66rem;letter-spacing:.1em;cursor:pointer;
+  background:transparent;text-decoration:none;transition:all .22s;
+}
+.plan-btn:hover,.plan-btn.solid{background:var(--red);color:var(--white);border-color:transparent}
+
+/* ── CTA ── */
+.cta-s{
+  padding:9rem 4.5rem;text-align:center;
+  background:var(--navy2);
+  position:relative;overflow:hidden;
+}
+.cta-s::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 80% at 30% 50%,rgba(200,16,46,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 70% 50%,rgba(3,25,76,.5) 0%,transparent 60%);
+  pointer-events:none;
+}
+.cta-s::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+.cta-inner{position:relative;z-index:1;max-width:640px;margin:0 auto}
+.cta-h{
+  font-family:var(--dp);font-size:clamp(2.5rem,4vw,4.2rem);
+  font-weight:800;line-height:1.15;margin-bottom:1rem;color:var(--white);
+  letter-spacing:-.01em;
+}
+.cta-h em{font-family:var(--sr);font-style:italic;font-weight:300;color:rgba(255,255,255,.45)}
+.cta-p{font-size:.9rem;font-weight:300;color:rgba(255,255,255,.45);line-height:2;margin-bottom:3rem}
+.cta-form{display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem}
+.cta-in{
+  padding:.82rem 1.2rem;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.15);color:var(--white);
+  font-family:var(--sn);font-size:.88rem;width:210px;outline:none;transition:border-color .2s;
+}
+.cta-in::placeholder{color:rgba(255,255,255,.25)}
+.cta-in:focus{border-color:rgba(255,255,255,.4)}
+.btn-cta{
+  background:var(--red);color:var(--white);border:none;
+  padding:.85rem 2.2rem;font-family:var(--mn);font-size:.72rem;letter-spacing:.12em;cursor:pointer;
+  transition:all .22s;
+}
+.btn-cta:hover{background:#a30d24;transform:translateY(-1px);box-shadow:0 12px 28px rgba(200,16,46,.35)}
+.cta-note{font-family:var(--mn);font-size:.56rem;color:rgba(255,255,255,.25);letter-spacing:.06em}
+
+/* ── CTA DASHBOARD SHOWCASE ── */
+.cta-showcase{
+  position:relative;
+  margin:0 -4.5rem 4rem;
+  overflow:hidden;
+}
+.cta-showcase-frame{
+  position:relative;
+  border:1px solid rgba(200,16,46,.25);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05),
+    0 0 80px rgba(200,16,46,.15),
+    0 40px 120px rgba(0,0,0,.9),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+.cta-showcase-bar{
+  background:#02113a;
+  border-bottom:2px solid var(--red);
+  padding:.5rem 1.2rem;
+  display:flex;align-items:center;gap:.75rem;
+  position:relative;z-index:2;
+}
+.csb-dots{display:flex;gap:.4rem}
+.csb-dot{width:9px;height:9px;border-radius:50%}
+.csb-dot:nth-child(1){background:#ff5f57}
+.csb-dot:nth-child(2){background:#febc2e}
+.csb-dot:nth-child(3){background:#28c840}
+.csb-url{
+  flex:1;margin:0 .75rem;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  padding:.28rem .9rem;border-radius:3px;
+  font-family:var(--mn);font-size:.56rem;color:rgba(255,255,255,.3);
+  letter-spacing:.04em;
+}
+.csb-logo{font-family:var(--dp);font-size:.78rem;font-weight:800;color:var(--white)}
+.csb-logo .M{color:var(--red)}
+.csb-badge{
+  font-family:var(--mn);font-size:.46rem;letter-spacing:.14em;
+  background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.3);
+  color:rgba(200,16,46,.8);padding:.2rem .6rem;
+}
+.cta-showcase-body{
+  position:relative;
+  height:520px;
+  overflow:hidden;
+  background:#edf1f8;
+}
+.cta-showcase-iframe{
+  border:none;
+  width:167%;
+  height:167%;
+  transform:scale(0.6);
+  transform-origin:top left;
+  pointer-events:none;
+}
+.cta-showcase-veil{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 55%,
+    rgba(7,31,90,.7) 80%,
+    var(--navy2) 100%
+  );
+  pointer-events:none;
+}
+.cta-showcase-veil-side{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    to right,
+    rgba(7,31,90,.4) 0%,
+    transparent 8%,
+    transparent 92%,
+    rgba(7,31,90,.4) 100%
+  );
+  pointer-events:none;
+}
+
+/* ── FOOTER ── */
+footer{
+  padding:2rem 4.5rem;background:var(--navy);
+  border-top:1px solid rgba(255,255,255,.06);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.ft-logo{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.ft-logo-name{font-family:var(--dp);font-size:1rem;font-weight:800;color:var(--white)}
+.ft-logo-name .M{color:var(--red)}
+.ft-jarvis{font-family:var(--mn);font-size:.46rem;letter-spacing:.24em;color:rgba(255,255,255,.3)}
+.ft-links{display:flex;gap:1.8rem}
+.ft-links a{font-family:var(--mn);font-size:.54rem;color:rgba(255,255,255,.3);text-decoration:none;letter-spacing:.06em;transition:color .2s}
+.ft-links a:hover{color:rgba(255,255,255,.7)}
+.ft-copy{font-family:var(--mn);font-size:.52rem;color:rgba(255,255,255,.2);letter-spacing:.04em}
+
+/* ── BLOCKQUOTE FEATURE ── */
+.feature-quote{
+  background:rgba(200,16,46,.06);
+  border:1px solid rgba(200,16,46,.15);
+  border-left:3px solid var(--red);
+  padding:2.5rem 3rem;margin:4rem 0;
+}
+.fq-text{
+  font-family:var(--sr);font-style:italic;
+  font-size:clamp(1.2rem,2vw,1.6rem);font-weight:300;
+  color:rgba(255,255,255,.8);line-height:1.75;margin-bottom:1rem;
+}
+.fq-cite{font-family:var(--mn);font-style:normal;font-size:.6rem;color:rgba(255,255,255,.35);letter-spacing:.1em}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+
+/* ── OS STATEMENT ── */
+.os-statement{
+  background:var(--red);padding:5rem 4.5rem;
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;
+}
+.os-left{}
+.os-label{font-family:var(--mn);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:1rem}
+.os-big{
+  font-family:var(--dp);font-size:clamp(2rem,3.5vw,3.5rem);
+  font-weight:800;color:var(--white);line-height:1.15;
+}
+.os-right{font-size:.92rem;font-weight:300;line-height:2.2;color:rgba(255,255,255,.75)}
+.os-right strong{color:var(--white);font-weight:500}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  nav{padding:0 2rem}
+  .nav-links{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .s{padding:5rem 2.5rem}
+  .evo-cols{grid-template-columns:1fr}
+  .layer-map{grid-template-columns:1fr 1fr}
+  .manifesto-grid{grid-template-columns:1fr}
+  .prof-grid{grid-template-columns:1fr;gap:3rem}
+  .prof-photo-card{position:static;max-width:360px}
+  .price-grid{grid-template-columns:1fr}
+  .strip{grid-template-columns:1fr 1fr}
+  .os-statement{grid-template-columns:1fr;gap:2.5rem;padding:4rem 2.5rem}
+  footer{flex-direction:column;gap:1.5rem;text-align:center;padding:2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="nav-logo-text">
+      <div class="nav-logo-name">e<span class="M">M</span>plex</div>
+      <div class="nav-logo-jarvis">J.A.R.V.I.S.</div>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#evolution">経営OSの進化</a></li>
+    <li><a href="#ecosystem">エコシステム</a></li>
+    <li><a href="#intelligence">経営参謀</a></li>
+    <li><a href="#cases">事例</a></li>
+    <li><a href="#pricing">導入</a></li>
+    <li><a href="#profile">代表</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="index.html" class="nav-back">← Standard LP</a>
+    <a href="#contact" class="nav-cta">無料相談を予約する</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Next-Generation Management Intelligence Platform</div>
+    <div class="hero-edition">
+      <div class="hero-edition-pulse"></div>
+      開発中 — eMplex J.A.R.V.I.S. β Coming Soon
+    </div>
+    <h1 class="hero-h1">
+      <span class="emplex">e<span class="M">M</span>plex</span>
+      <span class="jarvis-line">J.A.R.V.I.S.</span>
+    </h1>
+    <div class="hero-tagline">
+      経営に、<em>知性という参謀</em>を。<br>
+      数字を超えて、未来を読む。
+    </div>
+    <p class="hero-lead">
+      単なる「ダッシュボード」ではない。<br>
+      Judgment Assisted Real-time Visionary Intelligence System —<br>
+      経営者専属の参謀として、リアルタイムに意思決定を進化させる、次世代経営OSの誕生。
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">優先アクセスを申し込む</a>
+      <a href="#evolution" class="btn-secondary">経営OSの進化を見る</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="dashboard-preview">
+      <div class="preview-frame-wrap">
+        <!-- Topbar replica -->
+        <div class="preview-topbar">
+          <div class="preview-logo-area">
+            <div>
+              <div class="preview-logo-name">e<span class="pM">M</span>plex</div>
+              <div class="preview-logo-sub">J.A.R.V.I.S.</div>
+            </div>
+          </div>
+          <div class="preview-tabs">
+            <div class="preview-tab act">L0 Dashboard</div>
+            <div class="preview-tab">L1 知識生産性</div>
+            <div class="preview-tab">L2 広報/CRM</div>
+            <div class="preview-tab">L3a 販売</div>
+            <div class="preview-tab">L5 経営Intel.</div>
+          </div>
+        </div>
+        <!-- Iframe with mask -->
+        <div class="preview-iframe-container">
+          <iframe
+            class="preview-iframe"
+            src="../Claude CODE/emplex-erp/index.html"
+            loading="lazy"
+            title="eMplex J.A.R.V.I.S. — Dashboard Preview"
+          ></iframe>
+          <div class="preview-mask" style="background:linear-gradient(to bottom,transparent 60%,var(--navy) 100%);pointer-events:none">
+            <div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="strip">
+  <div class="strip-item reveal"><div class="strip-num">38<sup>+</sup></div><div class="strip-label">統合モジュール数</div></div>
+  <div class="strip-item reveal d1"><div class="strip-num">7<sup>層</sup></div><div class="strip-label">経営レイヤー設計</div></div>
+  <div class="strip-item reveal d2"><div class="strip-num">200<sup>+</sup></div><div class="strip-label">導入コンサル実績</div></div>
+  <div class="strip-item reveal d3"><div class="strip-num">1<sup>枚</sup></div><div class="strip-label">CEOワンページ経営</div></div>
+</div>
+
+<!-- OS EVOLUTION -->
+<section class="s navy" id="evolution">
+  <div class="s-label reveal">The OS Evolution</div>
+  <h2 class="s-h2 white reveal">経営ダッシュボードの<br>進化は、<span class="dim">UI進化</span>ではない。<br><span class="red">「経営OSの進化」</span>だ。</h2>
+  <p class="s-body white reveal">第一次（Excel集計）、第二次（BI可視化）を経て、eMplex J.A.R.V.I.S.は第三次「経営意思決定エンジン」へ。ダッシュボードの主役が数字・データ・意思決定へと移行していく必然の進化。</p>
+
+  <div class="evo-cols reveal">
+    <div class="evo-col past">
+      <div class="evo-col-gen">第一次 ／ 集計の時代</div>
+      <div class="evo-col-title">Excel<br>スプレッドシート</div>
+      <div class="evo-col-essence">本質：数字の可視化</div>
+      <ul class="evo-col-items">
+        <li>手動入力・マクロによる静的集計</li>
+        <li>データの属人化・タイムラグ</li>
+        <li>作成者以外は構造不明</li>
+        <li>常に「昨月末の数字」しか見えない</li>
+      </ul>
+      <div class="evo-col-verdict">限界：作成者が居ないと何もわからない。属人化と時間差の罠。</div>
+    </div>
+    <div class="evo-col middle">
+      <div class="evo-col-gen">第二次 ／ 統合の時代</div>
+      <div class="evo-col-title">BIツール<br>SaaS連携</div>
+      <div class="evo-col-essence">本質：データの一元管理</div>
+      <ul class="evo-col-items">
+        <li>Tableau / Power BI / Looker</li>
+        <li>SaaS API連携・リアルタイム化</li>
+        <li>データの「民主化」</li>
+        <li>誰でもKPIを確認できる</li>
+      </ul>
+      <div class="evo-col-verdict">矛盾：データの洪水。「で、次に何をすれば？」という問いに答えられない。</div>
+    </div>
+    <div class="evo-col now">
+      <div class="evo-col-gen">第三次 ／ eMplex J.A.R.V.I.S.</div>
+      <div class="evo-col-title">経営意思<br>決定エンジン</div>
+      <div class="evo-col-essence">本質：意思決定の支援</div>
+      <ul class="evo-col-items">
+        <li>異常・予兆を検知し、能動的に通知</li>
+        <li>着地予測・What-if分析を即座に提示</li>
+        <li>「なぜ？」を文脈として解説</li>
+        <li>貴社固有の先行KPIを自動抽出</li>
+        <li>経営者の思考を学習・進化</li>
+      </ul>
+      <div class="evo-col-verdict">これからの経営は「計器板を見る」のではなく「参謀と共に考える」へ。</div>
+    </div>
+  </div>
+
+  <div class="feature-quote reveal">
+    <div class="fq-text">「数字を並べる」技術から、「数字から意味を抽出する」知性へ。<br>各企業の"色"に合わせた独自のインテリジェンスを構築できるかどうかが、これからの競争力の源泉になる。</div>
+    <div class="fq-cite">— 古谷 幸治 / プロジェクト・イノベーション代表</div>
+  </div>
+</section>
+
+<!-- OS STATEMENT -->
+<div class="os-statement">
+  <div class="os-left reveal">
+    <div class="os-label">The Core Thesis</div>
+    <div class="os-big">経営ダッシュボードの進化とは、単なるUI進化ではなく<br>「経営そのもののOS進化」である。</div>
+  </div>
+  <div class="os-right reveal d1">
+    <strong>第一次の主役は「数字」</strong>だった。集計・記録・報告。<br><br>
+    <strong>第二次の主役は「データ」</strong>だった。可視化・リアルタイム化・民主化。<br><br>
+    <strong>第三次の主役は「意思決定」</strong>だ。予測・解釈・提案・実行支援。<br><br>
+    eMplex J.A.R.V.I.S.は、経営者の傍に置く<strong>専属参謀システム</strong>として設計された。経営者の右腕を、システム化する。
+  </div>
+</div>
+
+<!-- ECOSYSTEM -->
+<section class="s white-s" id="ecosystem">
+  <div class="s-label ink reveal">The Ecosystem — 7 Intelligence Layers</div>
+  <h2 class="s-h2 ink reveal">経営のすべてを、<br><em style="color:var(--red)">一枚の画面</em>に統合する。</h2>
+  <p class="s-body ink reveal">マーケティングの起点から経営インテリジェンスの頂点まで。38モジュールが有機的に統合され、どのデータも孤立しない。これが、次世代ERPの設計思想。</p>
+  <div class="layer-map reveal">
+    <div class="layer-item" data-l="l0">
+      <div class="layer-badge">L0 — Executive Layer</div>
+      <div class="layer-title">経営ダッシュボード</div>
+      <ul class="layer-modules">
+        <li>CEOワンページ経営管理</li>
+        <li>全社KPI・今日の必達</li>
+        <li>プロジェクト損益 PBM</li>
+        <li>CRM / SFA 統合ビュー</li>
+      </ul>
+    </div>
+    <div class="layer-item" data-l="l1">
+      <div class="layer-badge">L1 — 知識生産性</div>
+      <div class="layer-title">人的資本の生産性</div>
+      <ul class="layer-modules">
+        <li>スケジュール・勤怠管理</li>
+        <li>稼働管理・稼働分析</li>
+        <li>日報管理・プロジェクト進捗</li>
+        <li>知識労働者の生産性計測</li>
+      </ul>
+    </div>
+    <div class="layer-item" data-l="l2">
+      <div class="layer-badge">L2 — 広報・CRM</div>
+      <div class="layer-title">マーケティング統合</div>
+      <ul class="layer-modules">
+        <li>名刺 → MA → SFA 一気通貫</li>
+        <li>ABM（アカウントベースマーケ）</li>
+        <li>インテントセールス</li>
+        <li>メディア配信・PR管理</li>
+        <li>BtoB CRM取引先管理</li>
+      </ul>
+    </div>
+    <div class="layer-item" data-l="l3">
+      <div class="layer-badge">L3 — 販売・購買・契約</div>
+      <div class="layer-title">オペレーション管理</div>
+      <ul class="layer-modules">
+        <li>販売・購買・原価管理</li>
+        <li>経費申請・外注管理</li>
+        <li>赤字プロジェクト予測</li>
+        <li>受注損失引当金</li>
+        <li>契約・固定資産管理</li>
+      </ul>
+    </div>
+    <div class="layer-item" data-l="l4">
+      <div class="layer-badge">L4 — HR・人的資本</div>
+      <div class="layer-title">タレントマネジメント</div>
+      <ul class="layer-modules">
+        <li>タレント管理・人脈管理</li>
+        <li>エンゲージメント管理</li>
+        <li>人的資本管理（HCM）</li>
+        <li>採用ブランディング</li>
+        <li>人事評価・給与管理</li>
+      </ul>
+    </div>
+    <div class="layer-item" data-l="l5">
+      <div class="layer-badge">L5 — 経営インテリジェンス</div>
+      <div class="layer-title">フォーキャスト・戦略</div>
+      <ul class="layer-modules">
+        <li>業績予測・着地フォーキャスト</li>
+        <li>財務会計レポート</li>
+        <li>成長戦略レポート</li>
+        <li>上場審査対応（TOKYO PRO Market）</li>
+        <li>資金繰り管理・新規事業進捗</li>
+      </ul>
+    </div>
+    <div class="layer-item" data-l="l6">
+      <div class="layer-badge">L6 — 共通基盤</div>
+      <div class="layer-title">セキュリティ・連携</div>
+      <ul class="layer-modules">
+        <li>ワークフロー・マスター管理</li>
+        <li>アクセス制御・内部監査</li>
+        <li>API / 外部連携</li>
+        <li>クラウドインフラ・セキュリティ</li>
+      </ul>
+    </div>
+    <div class="layer-item" data-l="jarvis">
+      <div class="layer-badge">J.A.R.V.I.S. — 参謀層</div>
+      <div class="layer-title">経営インテリジェンス</div>
+      <ul class="layer-modules">
+        <li>全モジュール横断分析</li>
+        <li>異常・予兆の検知・通知</li>
+        <li>着地予測・シナリオ分析</li>
+        <li>ナラティブ解説レポート</li>
+        <li>個社固有の先行KPI提案</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="s navy2" id="intelligence">
+  <div class="s-label red-l reveal">The J.A.R.V.I.S. Intelligence</div>
+  <h2 class="s-h2 white reveal">"見る"から<br><span class="gold">「共に考える」</span>へ。<br><span class="dim">4つの革命。</span></h2>
+  <p class="s-body white reveal">ダッシュボードを見に行く時代は終わる。J.A.R.V.I.S.は経営者の傍に立ち、自ら語りかける参謀として機能する。</p>
+
+  <div class="manifesto-grid reveal">
+    <div class="mc">
+      <div class="mc-num">01</div>
+      <div class="mc-title">受動から能動へ<br>プッシュ型経営通知</div>
+      <div class="mc-desc">ダッシュボードを「見に行く」のではなく、J.A.R.V.I.S.が異常値・予兆を自動検知し、「今、ここを対策すべきです」と経営者に能動的に語りかける。プル型ブランディングの発想を、経営判断にも実装する。</div>
+      <div class="mc-vs"><div class="mc-vs-row"><span class="mc-vs-before">経営者がデータを見に行く</span><span class="mc-vs-arrow">→</span><span class="mc-vs-after">参謀が先回りして報告する</span></div></div>
+    </div>
+    <div class="mc">
+      <div class="mc-num">02</div>
+      <div class="mc-title">過去から未来へ<br>着地フォーキャスト知性</div>
+      <div class="mc-desc">実績の記録だけでなく、現在のペースから「着地予測」を自動算出。「もし来月の受注単価を10%上げたら？」というWhat-if分析を瞬時に提示。経営者は未来のシナリオを手で動かせる。</div>
+      <div class="mc-vs"><div class="mc-vs-row"><span class="mc-vs-before">過去の実績を振り返る</span><span class="mc-vs-arrow">→</span><span class="mc-vs-after">未来のシナリオを設計する</span></div></div>
+    </div>
+    <div class="mc">
+      <div class="mc-num">03</div>
+      <div class="mc-title">数字から文脈へ<br>ナラティブ経営解説</div>
+      <div class="mc-desc">「なぜ売上が下がったのか？」という問いに対し、SFA日報・社内議事録・外部環境データを統合解析。数字の変動を「原因と文脈」として経営言語で翻訳する。グラフが示す「何が」から、参謀が解説する「なぜ・次に何を」へ。</div>
+      <div class="mc-vs"><div class="mc-vs-row"><span class="mc-vs-before">グラフが「何が起きたか」を示す</span><span class="mc-vs-arrow">→</span><span class="mc-vs-after">参謀が「なぜ・次に何を」を解説</span></div></div>
+    </div>
+    <div class="mc">
+      <div class="mc-num">04</div>
+      <div class="mc-title">汎用から個社最適へ<br>バーチャル経営参謀</div>
+      <div class="mc-desc">画一的テンプレートではなく、その会社のビジネスモデル・業界特性・経営者の思考の癖を学習。独自の「先行指標（Leading KPI）」を自動抽出・提案する。不動産会社、建設会社、SaaS、D2C — それぞれ見るべき先行指標は全く異なる。</div>
+      <div class="mc-vs"><div class="mc-vs-row"><span class="mc-vs-before">業界標準テンプレートを使う</span><span class="mc-vs-arrow">→</span><span class="mc-vs-after">貴社専用の参謀知性が育つ</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CASES -->
+<section class="s navy" id="cases">
+  <div class="s-label gold-l reveal">Case Studies</div>
+  <h2 class="s-h2 white reveal">「経営判断の質」が<br><em style="color:rgba(255,255,255,.45)">変わった</em>。</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06);margin-top:4rem;" class="reveal">
+    <div style="padding:2.2rem 2rem;background:rgba(255,255,255,.03);">
+      <div style="font-family:var(--mn);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.5rem;">IT / SaaS — 従業員50名</div>
+      <div style="font-family:var(--dp);font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:.8rem;">プロジェクト型SaaS企業</div>
+      <div style="font-size:.8rem;font-weight:300;line-height:1.9;color:rgba(255,255,255,.45);margin-bottom:1rem;">SFAとプロジェクト管理が分離。「どの顧客が最も利益貢献しているか」誰にもわからず、会議は毎回データ説明で終わっていた。</div>
+      <div style="padding:.65rem .9rem;background:rgba(200,16,46,.08);border-left:2px solid var(--red);">
+        <div style="font-size:.78rem;font-weight:500;color:rgba(255,255,255,.75);line-height:1.65;">解約予兆を2ヶ月前に検知し事前対策でチャーンレート18%改善。プロジェクト別損益の可視化で、不採算案件への早期撤退判断が可能に。</div>
+      </div>
+    </div>
+    <div style="padding:2.2rem 2rem;background:rgba(255,255,255,.03);">
+      <div style="font-family:var(--mn);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.5rem;">建設 — 従業員120名</div>
+      <div style="font-family:var(--dp);font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:.8rem;">中堅建設会社</div>
+      <div style="font-size:.8rem;font-weight:300;line-height:1.9;color:rgba(255,255,255,.45);margin-bottom:1rem;">案件ごとの原価管理がExcelで属人化。月次決算が翌月末にようやく確定し、「今月黒字か赤字かわからないまま月末を迎える」状態が常態化。</div>
+      <div style="padding:.65rem .9rem;background:rgba(200,16,46,.08);border-left:2px solid var(--red);">
+        <div style="font-size:.78rem;font-weight:500;color:rgba(255,255,255,.75);line-height:1.65;">月次決算を翌月5営業日に短縮。着地予測により四半期末の利益ブレがなくなり、資金調達計画の精度が大幅に向上した。</div>
+      </div>
+    </div>
+    <div style="padding:2.2rem 2rem;background:rgba(255,255,255,.03);">
+      <div style="font-family:var(--mn);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.5rem;">コンサル — 従業員30名</div>
+      <div style="font-family:var(--dp);font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:.8rem;">コンサルティングファーム</div>
+      <div style="font-size:.8rem;font-weight:300;line-height:1.9;color:rgba(255,255,255,.45);margin-bottom:1rem;">コンサルタントの稼働率とプロジェクト損益が連動して見えず、「忙しいのに利益が出ない」が続いていた。最も稼ぐパートナーも不明確。</div>
+      <div style="padding:.65rem .9rem;background:rgba(200,16,46,.08);border-left:2px solid var(--red);">
+        <div style="font-size:.78rem;font-weight:500;color:rgba(255,255,255,.75);line-height:1.65;">稼働率×プロジェクト単価×粗利率の統合ダッシュボードで最適人員配置が実現。パートナー別収益貢献が可視化され、報酬設計を刷新。</div>
+      </div>
+    </div>
+    <div style="padding:2.2rem 2rem;background:rgba(255,255,255,.03);">
+      <div style="font-family:var(--mn);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.5rem;">D2C — 従業員80名</div>
+      <div style="font-family:var(--dp);font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:.8rem;">D2Cブランド運営会社</div>
+      <div style="font-size:.8rem;font-weight:300;line-height:1.9;color:rgba(255,255,255,.45);margin-bottom:1rem;">広告費・在庫・LTV・解約率がバラバラのツールで管理。「どのチャネルに投資すべきか」の判断根拠がなく、会議が毎回「データを集めてから」に。</div>
+      <div style="padding:.65rem .9rem;background:rgba(200,16,46,.08);border-left:2px solid var(--red);">
+        <div style="font-size:.78rem;font-weight:500;color:rgba(255,255,255,.75);line-height:1.65;">チャネル別LTV×CAC分析の週次自動更新で、投資対効果の高いチャネルへ予算シフト。広告費同水準で売上23%向上を達成。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="s navy2" id="pricing">
+  <div class="s-label reveal">Investment</div>
+  <h2 class="s-h2 white reveal">次世代経営OSへの<br><em style="color:rgba(255,255,255,.35)">導入プラン。</em></h2>
+  <p class="s-body white reveal">現在、β版への優先アクセスを限定数で受け付けています。経営の参謀を、今すぐシステム化する。</p>
+  <div class="price-grid reveal">
+    <div class="price-card">
+      <div class="plan-n">Intelligence Start</div>
+      <div class="plan-p">¥15<sub>万/月〜</sub></div>
+      <div class="plan-d">まず「経営の全体像」を構築するフェーズ。第二次から第三次への移行を支援します。</div>
+      <ul class="plan-fs">
+        <li>経営ダッシュボード基本構築（L0）</li>
+        <li>KPI一元管理・着地フォーキャスト</li>
+        <li>CRM / SFA統合ビュー</li>
+        <li>月次レポートミーティング</li>
+        <li>Looker Studio × Google エコシステム</li>
+      </ul>
+      <a href="#contact" class="plan-btn">相談する</a>
+    </div>
+    <div class="price-card hot">
+      <div class="price-tag">RECOMMENDED</div>
+      <div class="plan-n">J.A.R.V.I.S. Core</div>
+      <div class="plan-p">¥35<sub>万/月〜</sub></div>
+      <div class="plan-d">経営参謀としてのJ.A.R.V.I.S.を本格実装。予兆検知・ナラティブ解説・バーチャル参謀機能を実装します。</div>
+      <ul class="plan-fs">
+        <li>Intelligence Startの全機能</li>
+        <li>L1〜L3 モジュール統合設計</li>
+        <li>フォーキャスト×What-if分析</li>
+        <li>ナラティブ解説レポート（週次）</li>
+        <li>先行KPI自動抽出・提案</li>
+        <li>月2回の経営参謀ミーティング</li>
+      </ul>
+      <a href="#contact" class="plan-btn solid">優先アクセスを申し込む</a>
+    </div>
+    <div class="price-card">
+      <div class="plan-n">Virtual C-Suite</div>
+      <div class="plan-p">¥65<sub>万/月〜</sub></div>
+      <div class="plan-d">完全個社設計のバーチャル経営参謀。L0〜L6全層を統合し、上場準備にも対応する最上位プラン。</div>
+      <ul class="plan-fs">
+        <li>J.A.R.V.I.S. Coreの全機能</li>
+        <li>全38モジュール統合設計</li>
+        <li>個社専用インテリジェンスモデル</li>
+        <li>上場準備対応（TOKYO PRO Market）</li>
+        <li>週次経営参謀ミーティング</li>
+        <li>投資家向け開示資料サポート</li>
+      </ul>
+      <a href="#contact" class="plan-btn">相談する</a>
+    </div>
+  </div>
+  <div style="margin-top:3rem;padding:2rem;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);display:flex;align-items:flex-start;gap:1.5rem;" class="reveal">
+    <div style="font-family:var(--mn);font-size:.56rem;letter-spacing:.16em;color:rgba(245,158,11,.7);white-space:nowrap;margin-top:.1rem;">β ACCESS</div>
+    <div style="font-size:.84rem;font-weight:300;line-height:1.85;color:rgba(255,255,255,.55);">eMplex J.A.R.V.I.S.は現在、<strong style="color:rgba(255,255,255,.8);">優先β版パートナーを限定12社</strong>で募集中です。β版パートナー企業には、正式版リリース後も優先価格での継続提供を保証します。この機会に、経営OSを先行して進化させてください。</div>
+  </div>
+</section>
+
+<!-- PROFILE -->
+<section class="s prof-section" id="profile">
+  <div class="prof-grid">
+    <div class="prof-photo-card reveal">
+      <div class="prof-photo">
+        <img
+          src="furuya-profile.jpg"
+          alt="古谷 幸治 — プロジェクト・イノベーション代表"
+          style="object-position: 62% top;"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+        >
+        <div class="prof-photo-placeholder" style="display:none">
+          <div class="prof-photo-initial">古</div>
+        </div>
+      </div>
+      <div class="prof-name-block">
+        <div class="prof-name">古谷 幸治</div>
+        <div class="prof-name-en">Koji Furuya</div>
+        <div class="prof-role-line">株式会社プロジェクト・イノベーション<br>代表取締役CEO<br>eMplex J.A.R.V.I.S. 設計者</div>
+        <div class="prof-badges">
+          <div class="prof-badge">プロジェクト管理会計士</div>
+          <div class="prof-badge">取締役CFO 経験者</div>
+          <div class="prof-badge">上場企業（ホリプロ）経営企画責任者</div>
+          <div class="prof-badge">SCSK（東証プライム）グループ企業 参画</div>
+          <div class="prof-badge">経営参謀 コンサルティング 200社+</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prof-career reveal d1">
+      <div class="prof-career-intro">
+        プロジェクト型ビジネスにおける<br>
+        経営管理の<em>プロフェッショナル。</em><br>
+        財務・CFO・経営企画・事業開発——<br>
+        経営の全断面を歩いてきた。
+      </div>
+
+      <div class="c-item">
+        <div class="c-yr">1991</div>
+        <div class="c-txt">神奈川県横浜市出身。大学卒業後、不動産デベロッパー<strong>「朋友建設」</strong>に新卒入社。財務部に配属。入社2年後、和議（民事再生）を経験。再生業務・建設業界における財務の実務を現場で学ぶ。</div>
+      </div>
+      <div class="c-item">
+        <div class="c-yr">2002</div>
+        <div class="c-txt">アクセンチュア出身メンバーが立ち上げたITCRMソフトウェア会社<strong>「エンプレックス（現 SCSK／東証プライム）」</strong>に参画。<strong>取締役CFO</strong>に就任。経営管理・経営企画・上場準備を担当。<br><br>プロジェクトバジェット・マネジメントシステム「<strong>eMplex PBM</strong>」を開発。不動産建設業の会計知識をベースに、映像制作業・ソフトウェア開発・SIer・ITサービス業での経営管理経験から<strong>「プロジェクト管理会計」</strong>の手法を自ら体系化。コンサルティング実績200社超。そのフォーキャストマネジメント手法は業界で圧倒的な支持を得る。</div>
+      </div>
+      <div class="c-item">
+        <div class="c-yr">2010</div>
+        <div class="c-txt">エンプレックス事業譲渡を経て、芸能プロダクション<strong>「ホリプロ」（当時 東証一部）</strong>へ業界チェンジ。<strong>経営企画責任者</strong>として開示業務・子会社管理・グループ経営管理を担当。新規事業として<strong>テレビ通販事業責任者</strong>を兼務し、複数のテレビ通販ブランド・タレントブランドのプロデュース、キャスティングサービスを立ち上げる。</div>
+      </div>
+      <div class="c-item">
+        <div class="c-yr">2020</div>
+        <div class="c-txt"><strong>株式会社プロジェクト・イノベーション</strong>を設立、代表取締役CEOに就任。工業社会から知識社会へのシフトを見据え、<em>知識労働者の生産性を測る</em>次世代経営OSとしてeMplex J.A.R.V.I.S.を設計・開発。</div>
+      </div>
+
+      <div style="margin-top:2.5rem;padding:1.8rem 2rem;background:rgba(3,25,76,.06);border-left:3px solid var(--red);">
+        <div style="font-family:var(--mn);font-size:.52rem;letter-spacing:.2em;color:var(--red);margin-bottom:1rem;opacity:.8;">STRENGTHS</div>
+        <div style="display:flex;flex-direction:column;gap:.6rem;">
+          <div style="display:flex;gap:.75rem;align-items:baseline;font-size:.84rem;font-weight:300;color:var(--fog);line-height:1.8;">
+            <span style="color:var(--red);font-family:var(--mn);font-size:.6rem;flex-shrink:0;">01</span>
+            工業社会から知識社会へのシフト——<strong style="color:var(--navy);font-weight:500;">知識労働者の生産性を測る伝道師</strong>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:baseline;font-size:.84rem;font-weight:300;color:var(--fog);line-height:1.8;">
+            <span style="color:var(--red);font-family:var(--mn);font-size:.6rem;flex-shrink:0;">02</span>
+            <strong style="color:var(--navy);font-weight:500;">プロジェクトごとの採算管理</strong>の仕組みを作るプロフェッショナル
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;padding:1.5rem 2rem;background:rgba(3,25,76,.04);border-left:3px solid var(--navy);">
+        <div style="font-family:var(--mn);font-size:.52rem;letter-spacing:.2em;color:var(--mist);margin-bottom:.7rem;">WHY J.A.R.V.I.S.</div>
+        <div style="font-family:var(--sr);font-style:italic;font-size:.98rem;color:var(--navy);line-height:1.9;">「経営者の横に座って、数字から未来を読む。その仕事を、30年やってきた。eMplex J.A.R.V.I.S.は、その経験をシステムとして届ける挑戦だ。」</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-s" id="contact">
+  <div class="cta-inner">
+    <h2 class="cta-h">経営に、<em>知性という参謀</em>を。<br>今すぐ、β版を体験する。</h2>
+    <p class="cta-p">優先β版パートナー 限定12社 — 先着順。<br>eMplex J.A.R.V.I.S.が貴社の経営OSをどう進化させるか、60分の無料相談でご説明します。</p>
+  </div>
+
+  <!-- Full-width dashboard showcase -->
+  <div class="cta-showcase">
+    <div class="cta-showcase-frame">
+      <div class="cta-showcase-bar">
+        <div class="csb-dots">
+          <div class="csb-dot"></div>
+          <div class="csb-dot"></div>
+          <div class="csb-dot"></div>
+        </div>
+        <div class="csb-url">emplex-jarvis.jp / dashboard</div>
+        <div class="csb-logo">e<span class="M">M</span>plex</div>
+        <div class="csb-badge">LIVE PREVIEW</div>
+      </div>
+      <div class="cta-showcase-body">
+        <iframe
+          class="cta-showcase-iframe"
+          src="../Claude CODE/emplex-erp/index.html"
+          loading="lazy"
+          title="eMplex J.A.R.V.I.S. — Full Dashboard"
+        ></iframe>
+        <div class="cta-showcase-veil"></div>
+        <div class="cta-showcase-veil-side"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-inner">
+    <div class="cta-form">
+      <input type="text" class="cta-in" id="cta-company" placeholder="会社名">
+      <input type="email" class="cta-in" id="cta-email" placeholder="メールアドレス">
+      <button class="btn-cta" id="cta-submit">優先アクセスを申し込む</button>
+    </div>
+    <div class="cta-note">初回60分 完全無料 ／ 強引な営業は一切行いません ／ β版パートナーは先着12社限定</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="ft-logo">
+    <div style="margin-right:.2rem">
+      <div class="ft-logo-name">e<span class="M">M</span>plex</div>
+      <div class="ft-jarvis">J.A.R.V.I.S.</div>
+    </div>
+  </a>
+  <div class="ft-links">
+    <a href="#evolution">経営OSの進化</a>
+    <a href="#ecosystem">エコシステム</a>
+    <a href="#cases">事例</a>
+    <a href="#pricing">導入</a>
+    <a href="index.html">Standard LP</a>
+    <a href="evolution.html">Evolution LP</a>
+  </div>
+  <div class="ft-copy">© 2025–2026 Project Innovation / Koji Furuya — eMplex J.A.R.V.I.S.</div>
+</footer>
+
+<script>
+// Reveal on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in') });
+}, { threshold: .08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// CTA → mailto
+document.getElementById('cta-submit').addEventListener('click', () => {
+  const co = document.getElementById('cta-company').value.trim();
+  const em = document.getElementById('cta-email').value.trim();
+  const body = encodeURIComponent(
+    '【eMplex J.A.R.V.I.S. β版 優先アクセス申し込み】\n\n' +
+    '会社名：' + (co || '（未記入）') + '\n' +
+    'メールアドレス：' + (em || '（未記入）') + '\n\n' +
+    '---\neMplex J.A.R.V.I.S.の優先β版パートナーとして参加を希望します。\n' +
+    '60分の無料相談をお願いできますでしょうか。'
+  );
+  window.location.href = 'mailto:ykfuruya0703@gmail.com'
+    + '?subject=' + encodeURIComponent('【β版申込】eMplex J.A.R.V.I.S. — ' + (co || 'お問い合わせ'))
+    + '&body=' + body;
+});
+</script>
+</body>
+</html>
